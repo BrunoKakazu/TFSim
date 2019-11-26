@@ -22,6 +22,8 @@ int sc_main(int argc, char *argv[])
 {
     using namespace nana;
     vector<string> instruction_queue;
+    int nloop;
+    nloop = 1;
     int nadd,nmul,nls;
     nadd = 3;
     nmul = nls = 2;
@@ -542,6 +544,11 @@ int sc_main(int argc, char *argv[])
     clock_control.enabled(false);
     botao.events().click([&]
     {
+    	inputbox ibox(fm,"","Quantidade de Ciclos");
+    	inputbox::integer loop("CICLOS",nloop,1,100,1);
+    	if(ibox.show_modal(loop)){
+        	nloop = loop.value();
+        }
         if(fila)
         {
             botao.enabled(false);
@@ -563,10 +570,12 @@ int sc_main(int argc, char *argv[])
         else
             show_message("Fila de instruções vazia","A fila de instruções está vazia. Insira um conjunto de instruções para iniciar.");
     });
-    clock_control.events().click([]
+    clock_control.events().click([&nloop]
     {
-        if(sc_is_running())
-            sc_start();
+    	for(int i = 0; i < nloop; i++){
+        	if(sc_is_running())
+            	sc_start();
+    	}
     });
     exit.events().click([]
     {
